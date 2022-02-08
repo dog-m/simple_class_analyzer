@@ -12,10 +12,6 @@ public class App {
         return Modifier.isPublic(m.getModifiers()) || m.isDefault();
     }
 
-    static boolean isAbstract(final Method m) {
-        return Modifier.isAbstract(m.getModifiers());
-    }
-
     static String getPartialSignature(final Method m) {
         return String.format(
                 "%s: (%s) -> %s",
@@ -30,14 +26,13 @@ public class App {
         final String targetClass = args[0];
 
         final Class<?> cls = Class.forName(targetClass);
-        final boolean isInterface = cls.isInterface();
 
         final Set<String> publicMethods = new TreeSet<>();
         final Set<String> otherMethods = new TreeSet<>();
 
         // look for public methods declared by the class itself
         for (final Method m : cls.getDeclaredMethods())
-            if (isPublic(m) && (!isAbstract(m) || isInterface) && !m.isSynthetic()
+            if (isPublic(m) && !m.isSynthetic()
             ) {
                 final String signature = getPartialSignature(m);
                 publicMethods.add(signature);
@@ -48,7 +43,7 @@ public class App {
         for (final Method m : cls.getMethods()) {
             final String signature = getPartialSignature(m);
 
-            if (isPublic(m) && (!isAbstract(m) || isInterface) && !m.isSynthetic()
+            if (isPublic(m) && !m.isSynthetic()
                     &&
                     m.getDeclaringClass() != Object.class
                     &&
